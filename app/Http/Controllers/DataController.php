@@ -8,6 +8,7 @@ use App\Models\DataStatus;
 use App\Models\DataCategory;
 use App\Models\Revision;
 use App\Models\School;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
@@ -16,7 +17,10 @@ use Illuminate\Support\Facades\Storage;
 class DataController extends Controller
 {
    public function index() {
-      $data = Data::all();
+      $data = Data::with(['data_type', 'data_status', 'data_type.data_category', 'school'])->filter(request(['school', 'status', 'category', 'data_type', 'year']))->orderBy('updated_at', 'desc')->paginate(10);
+      foreach ($data as $d) {
+         $d->date = Carbon::parse($d->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
+      }
       return response()->json(['status' => 'success', 'data' => $data]);
    }
    
@@ -26,7 +30,7 @@ class DataController extends Controller
    }
 
    public function getDataBySchool($id) {
-      $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->where('school_id', $id)->filter(request(['status', 'category', 'data_type']))->orderBy('updated_at', 'desc')->paginate(10);
+      $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->where('school_id', $id)->filter(request(['status', 'category', 'data_type', 'year']))->orderBy('updated_at', 'desc')->paginate(10);
       foreach($data as $d) {
          $d->type = $d->data_type->name;
          $d->status = $d->data_status->name;
@@ -37,7 +41,7 @@ class DataController extends Controller
 
    public function getDataBySupervisor($id) {
       $schools = School::where('supervisor_id', $id)->pluck('id');
-      $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->whereIn('school_id', $schools)->filter(request(['status', 'category', 'data_type', 'school']))->orderBy('updated_at', 'desc')->paginate(10);
+      $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->whereIn('school_id', $schools)->filter(request(['school', 'status', 'category', 'data_type', 'year']))->orderBy('updated_at', 'desc')->paginate(10);
       foreach($data as $d) {
          // $d->school = $d->school->name;
          $d->data_category = $d->data_type->data_category;
@@ -46,7 +50,7 @@ class DataController extends Controller
    }
 
    public function getVerifiedData() {
-      $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->where('data_status_id', 2)->filter(request(['status', 'category', 'data_type', 'school']))->orderBy('updated_at', 'desc')->paginate(10);
+      $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->where('data_status_id', 2)->filter(request(['school', 'status', 'category', 'data_type', 'year']))->orderBy('updated_at', 'desc')->paginate(10);
       // foreach($data as $d) {
       //    $d->data_category = $d->data_type->data_category;
       // }
@@ -132,5 +136,14 @@ class DataController extends Controller
          $response = new Response($file, 200);
          return $response;
       } else return response()->json(['error' => 'File not found'], 404);
+   }
+
+   public function searchSchoolFilter(Request $request) {
+      if ($request->school_id) {
+         $data = School::where('id', $request->school_id)->first();
+      } else {
+         $data = School::where('name', 'like', '%'.$request->school.'%')->get();
+      }
+      return response()->json(['status' => 'success', 'data' => $data]);
    }
 }

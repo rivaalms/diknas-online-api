@@ -54,5 +54,8 @@ class Data extends Model
       $query->when($filters['school'] ?? false, function($query, $school) {
          return $query->where('school_id', $school);
       });
+      $query->when($filters['year'] ?? false, function($query, $year) {
+         return $query->where('year', 'like', '%'.$year.'%');
+      });
    }
 }
