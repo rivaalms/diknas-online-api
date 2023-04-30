@@ -21,6 +21,7 @@ $router->get('/', function () use ($router) {
 
 $router->post('/school/login', 'SchoolController@login');
 $router->post('/supervisor/login', 'SupervisorController@login');
+$router->post('/diknas/login', 'DiknasController@login');
 
 $router->group(['middleware' => 'auth'], function() use($router) {
     $router->get('/school', 'SchoolController@index');
@@ -48,15 +49,17 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     $router->post('/supervisor/verifyData', 'DataController@verifyData');
     $router->post('/supervisor/revisionData', 'DataController@revisionData');
     $router->put('/supervisor/updatepassword/{id}', 'SupervisorController@updatePassword');
-    // $router->get('/supervisor/getStudents', 'SchoolStudentController@supervisorGetStudents');
+
+    $router->get('/diknas/getSelf', 'DiknasController@getSelf');
+    $router->get('/diknas/getAllSchool', 'DiknasController@getAllSchool');
+    $router->get('/diknas/getData', 'DataController@getVerifiedData');
+    $router->get('/diknas/getSchoolStats', 'DiknasController@getSchoolStats');
+    $router->put('/diknas/updatepassword/{id}', 'DiknasController@updatePassword');
     
     $router->get('/getCategories', 'CategoryController@index');
-    // $router->get('/getDataTypes/{slug}', 'CategoryController@getDataTypes');
     $router->get('/getDataTypes', 'CategoryController@getDataTypes');
     $router->get('/getStatus', 'StatusController@index');
-
     $router->post('/downloadFile', 'DataController@downloadFile');
-    
     $router->get('/edit/{id}', 'DataController@edit');
     $router->get('/getData', 'DataController@index');
     $router->get('/getDataById/{id}', 'DataController@getDataById');

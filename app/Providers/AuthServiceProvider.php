@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Diknas;
 use App\Models\User;
 use App\Models\School;
 use App\Models\Supervisor;
@@ -39,14 +40,10 @@ class AuthServiceProvider extends ServiceProvider
                     return School::where('api_token', end($explode))->first();
                 } else if ($request->header('User-Type') == 2) {
                     return Supervisor::where('api_token', end($explode))->first();
+                } else if ($request->header('User-Type') == 3) {
+                    return Diknas::where('api_token', end($explode))->first();
                 }
             }
         });
-
-        // $this->app['auth']->viaRequest('api', function ($request) {
-        //     if ($request->input('api_token')) {
-        //         return User::where('api_token', $request->input('api_token'))->first();
-        //     }
-        // });
     }
 }

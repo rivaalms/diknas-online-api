@@ -45,6 +45,14 @@ class DataController extends Controller
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
+   public function getVerifiedData() {
+      $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->where('data_status_id', 2)->filter(request(['status', 'category', 'data_type', 'school']))->orderBy('updated_at', 'desc')->paginate(10);
+      // foreach($data as $d) {
+      //    $d->data_category = $d->data_type->data_category;
+      // }
+      return response()->json(['status' => 'success', 'data' => $data]);
+   }
+
    public function verifyData(Request $request) {
       $data = Data::find($request->id);
       $data->update([
