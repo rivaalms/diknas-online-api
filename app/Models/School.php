@@ -37,6 +37,10 @@ class School extends Model implements AuthenticatableContract, AuthorizableContr
       return $this->belongsTo(Supervisor::class);
    }
 
+   public function school_type() {
+      return $this->belongsTo(SchoolType::class);
+   }
+
    public function school_students() {
       return $this->hasMany(SchoolStudent::class);
    }

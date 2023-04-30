@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\School;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -9,7 +10,12 @@ use Illuminate\Support\Facades\Hash;
 class SchoolController extends Controller
 {
    public function index() {
-      $schools = School::orderBy('created_at', 'desc')->paginate(10);
+      $schools = School::with(['supervisor', 'school_type'])->orderBy('created_at', 'desc')->paginate(10);
+      foreach ($schools as $s) {
+         if ($s->updated_at) {
+            $s->date = Carbon::parse($s->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
+         }
+      }
       return response()->json(['status' => 'success', 'data' => $schools]);
    }
 
