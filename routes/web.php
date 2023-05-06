@@ -22,6 +22,7 @@ $router->get('/', function () use ($router) {
 $router->post('/school/login', 'SchoolController@login');
 $router->post('/supervisor/login', 'SupervisorController@login');
 $router->post('/diknas/login', 'DiknasController@login');
+$router->post('/admin/login', 'UserController@login');
 
 $router->group(['middleware' => 'auth'], function() use($router) {
     $router->get('/school', 'SchoolController@index');
@@ -29,6 +30,7 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     $router->get('/school/getSelf', 'SchoolController@getSchoolLogin');
     $router->get('/school/get/{id}', 'SchoolController@getSingle');
     $router->put('/school/update/{id}', 'SchoolController@update');
+    $router->delete('/school/delete/{id}', 'SchoolController@destroy');
     $router->post('/school/logout', 'SchoolController@logout');
     $router->get('/school/getData/{id}', 'DataController@getDataBySchool');
     $router->put('/school/data/{id}/update', 'DataController@updateSchool');
@@ -41,6 +43,8 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     $router->post('/school/teachers', 'SchoolTeacherController@storeTeachers');
     $router->get('/school/getRevisionData/{id}', 'RevisionController@getRevisionData');
 
+    $router->get('/supervisor', 'SupervisorController@index');
+    $router->get('/supervisor/getAll', 'SupervisorController@getAll');
     $router->post('/supervisor/logout', 'SupervisorController@logout');
     $router->get('/supervisor/getSelf', 'SupervisorController@getSelf');
     $router->get('/supervisor/getData/{id}', 'DataController@getDataBySupervisor');
@@ -49,12 +53,30 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     $router->post('/supervisor/verifyData', 'DataController@verifyData');
     $router->post('/supervisor/revisionData', 'DataController@revisionData');
     $router->put('/supervisor/updatepassword/{id}', 'SupervisorController@updatePassword');
+    $router->post('/supervisor/create', 'SupervisorController@store');
+    $router->put('/supervisor/update/{id}', 'SupervisorController@update');
+    $router->delete('/supervisor/delete/{id}', 'SupervisorController@delete');
 
+    $router->get('/diknas', 'DiknasController@index');
     $router->get('/diknas/getSelf', 'DiknasController@getSelf');
     $router->get('/diknas/getAllSchool', 'DiknasController@getAllSchool');
     $router->get('/diknas/getData', 'DataController@getVerifiedData');
     $router->get('/diknas/getSchoolStats', 'DiknasController@getSchoolStats');
     $router->put('/diknas/updatepassword/{id}', 'DiknasController@updatePassword');
+    $router->post('/diknas/create', 'DiknasController@store');
+    $router->put('/diknas/update/{id}', 'DiknasController@update');
+    $router->delete('/diknas/delete/{id}', 'DiknasController@delete');
+    
+    $router->get('/admin', 'UserController@index');
+    $router->get('/admin/getSelf', 'UserController@getSelf');
+    $router->get('/admin/searchSchoolFilter', 'DataController@searchSchoolFilter');
+    $router->get('/admin/countUsers', 'UserController@countUsers');
+    $router->get('/admin/countSchoolByType', 'UserController@countSchoolByType');
+    $router->post('/admin/createSchool', 'SchoolController@store');
+    $router->get('/admin/countSupervisors', 'UserController@countSupervisors');
+    $router->post('/admin/create', 'UserController@store');
+    $router->put('/admin/update/{id}', 'UserController@update');
+    $router->delete('/admin/delete/{id}', 'UserController@delete');
     
     $router->get('/getCategories', 'CategoryController@index');
     $router->get('/getDataTypes', 'CategoryController@getDataTypes');
@@ -65,4 +87,5 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     $router->get('/getDataById/{id}', 'DataController@getDataById');
     $router->post('/data/create', 'DataController@create');
     $router->delete('/data/{id}/delete', 'DataController@delete');
+    $router->get('/getSchoolType', 'SchoolController@getSchoolType');
 });

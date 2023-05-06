@@ -42,6 +42,8 @@ class AuthServiceProvider extends ServiceProvider
                     return Supervisor::where('api_token', end($explode))->first();
                 } else if ($request->header('User-Type') == 3) {
                     return Diknas::where('api_token', end($explode))->first();
+                } else if ($request->header('User-Type') == 4) {
+                    return User::where('api_token', end($explode))->first();
                 }
             }
         });
