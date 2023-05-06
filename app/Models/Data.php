@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Database\Factories\DataFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class Data extends Model
 {
@@ -24,6 +26,11 @@ class Data extends Model
    * @var string[]
    */
 
+   protected static function factory(): Factory
+   {
+      return DataFactory::new();
+   }
+   
    public function data_type() {
       return $this->belongsTo(DataType::class);
    }
