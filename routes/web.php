@@ -77,6 +77,7 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     $router->post('/admin/create', 'UserController@store');
     $router->put('/admin/update/{id}', 'UserController@update');
     $router->delete('/admin/delete/{id}', 'UserController@delete');
+    $router->put('/admin/updatepassword/{id}', 'UserController@updatepassword');
     
     $router->get('/getCategories', 'CategoryController@index');
     $router->get('/getDataTypes', 'CategoryController@getDataTypes');
