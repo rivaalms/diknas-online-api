@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class SchoolController extends Controller
 {
    public function index() {
-      $schools = School::with(['supervisor', 'school_type'])->filter(request(['school_type']))->orderBy('updated_at', 'desc')->paginate(10);
+      $schools = School::with(['supervisor', 'school_type'])->filter(request(['school_type', 'name']))->orderBy('updated_at', 'desc')->paginate(10);
 
       $schoolStudents = new SchoolStudentController;
       $schoolTeachers = new SchoolTeacherController;
@@ -54,6 +54,8 @@ class SchoolController extends Controller
          'password' => 'required',
          'school_type_id' => 'required',
          'supervisor_id' => 'required',
+         'principal' => 'nullable',
+         'address' => 'nullable'
       ]);
 
       $cred['password'] = Hash::make($cred['password']);
