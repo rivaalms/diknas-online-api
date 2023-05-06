@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('data', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('data_type_id')->constrained('data_types');
-            $table->foreignId('school_id')->constrained('schools');
+            $table->foreignId('data_type_id')/* ->constrained('data_types') */;
+            $table->foreignId('school_id')/* ->constrained('schools') */;
             $table->string('path');
             $table->string('year');
-            $table->foreignId('data_status_id')->constrained('data_statuses');
+            $table->foreignId('data_status_id')/* ->constrained('data_statuses') */;
             $table->timestamps();
         });
     }

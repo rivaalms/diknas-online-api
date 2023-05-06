@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('nip');
+            $table->string('email')->unique();
             $table->string('password');
             $table->string('api_token', 40)->nullable();
             $table->timestamps();

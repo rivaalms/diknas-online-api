@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('school_type_id')->constrained('school_types');
-            $table->foreignId('supervisor_id')->constrained('supervisors');
+            $table->foreignId('school_type_id')/* ->constrained('school_types') */;
+            $table->foreignId('supervisor_id')/* ->constrained('supervisors') */;
             $table->string('principal')->nullable();
             $table->text('address')->nullable();
             $table->string('email')->unique();

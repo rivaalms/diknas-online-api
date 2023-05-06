@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
-            $table->foreignId('data_category_id')->constrained('data_categories');
+            $table->foreignId('data_category_id')/* ->constrained('data_categories') */;
             $table->timestamps();
         });
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('school_teachers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('school_id')->constrained('schools');
+            $table->foreignId('school_id')/* ->constrained('schools') */;
             $table->string('year');
             $table->integer('math');
             $table->integer('ind_lit');
