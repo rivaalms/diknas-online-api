@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\School;
+use App\Models\SchoolType;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -10,8 +11,20 @@ use Illuminate\Support\Facades\Hash;
 class SchoolController extends Controller
 {
    public function index() {
-      $schools = School::with(['supervisor', 'school_type'])->orderBy('created_at', 'desc')->paginate(10);
+      $schools = School::with(['supervisor', 'school_type'])->filter(request(['school_type']))->orderBy('updated_at', 'desc')->paginate(10);
+
+      $schoolStudents = new SchoolStudentController;
+      $schoolTeachers = new SchoolTeacherController;
+
       foreach ($schools as $s) {
+         $students = $schoolStudents->getStudentsNotJSON($s->id);
+         $s->total_students = $students->total_students;
+         $s->students = $students->students;
+
+         $teachers = $schoolTeachers->getTeachersNotJSON($s->id);
+         $s->total_teachers = $teachers->total_teachers;
+         $s->teachers = $teachers->teachers;
+         
          if ($s->updated_at) {
             $s->date = Carbon::parse($s->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
          }
@@ -36,7 +49,7 @@ class SchoolController extends Controller
 
    public function store(Request $request) {
       $cred = $this->validate($request, [
-         'name' => 'required',
+         'name' => 'required|unique:schools',
          'email' => 'required|email|unique:schools',
          'password' => 'required',
          'school_type_id' => 'required',
@@ -45,8 +58,8 @@ class SchoolController extends Controller
 
       $cred['password'] = Hash::make($cred['password']);
 
-      School::create($cred);
-      return response()->json(['status' => 'success']);
+      $data = School::create($cred);
+      return response()->json(['status' => 'success', 'data' => $data]);
    }
 
    public function getSingle($id) {
@@ -65,13 +78,18 @@ class SchoolController extends Controller
          'school_type_id' => 'required',
          'supervisor_id' => 'required',
          'principal' => 'nullable',
-         'address' => 'nullable'
+         'address' => 'nullable',
       ]);
       
+      if ($request->password) {
+         if (Hash::check($request->old_password, $school->password)) {
+            $cred['password'] = Hash::make($request->password);
+         }
+      }
       // $cred['password'] = $password;
 
       $school->update($cred);
-      return response()->json(['status' => 'success']);
+      return response()->json(['status' => 'success', 'data' => $school]);
    }
 
    public function updatePassword(Request $request, $id) {
@@ -108,5 +126,10 @@ class SchoolController extends Controller
       $school = $request->user();
       $school->update(['api_token' => null]);
       return response()->json(['status' => 'success']);
+   }
+
+   public function getSchoolType() {
+      $data = SchoolType::all();
+      return response()->json(['status' => 'success', 'data' => $data]);
    }
 }
