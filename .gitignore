@@ -9,3 +9,4 @@ app/Http/Controllers/ExampleController.php
 app/Http/Middleware/CorsMiddleware.php
 app/Http/Middleware/ExampleMiddleware.php
 tests/ExampleTest.php
+.DS_Store
