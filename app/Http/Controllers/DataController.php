@@ -138,12 +138,8 @@ class DataController extends Controller
       } else return response()->json(['error' => 'File not found'], 404);
    }
 
-   public function searchSchoolFilter(Request $request) {
-      if ($request->school_id) {
-         $data = School::where('id', $request->school_id)->first();
-      } else {
-         $data = School::where('name', 'like', '%'.$request->school.'%')->get();
-      }
+   public function searchSchoolFilter() {
+      $data = School::all();
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 }

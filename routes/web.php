@@ -69,7 +69,6 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     
     $router->get('/admin', 'UserController@index');
     $router->get('/admin/getSelf', 'UserController@getSelf');
-    $router->get('/admin/searchSchoolFilter', 'DataController@searchSchoolFilter');
     $router->get('/admin/countUsers', 'UserController@countUsers');
     $router->get('/admin/countSchoolByType', 'UserController@countSchoolByType');
     $router->post('/admin/createSchool', 'SchoolController@store');
@@ -79,6 +78,7 @@ $router->group(['middleware' => 'auth'], function() use($router) {
     $router->delete('/admin/delete/{id}', 'UserController@delete');
     $router->put('/admin/updatepassword/{id}', 'UserController@updatepassword');
     
+    $router->get('/searchSchoolFilter', 'DataController@searchSchoolFilter');
     $router->get('/getCategories', 'CategoryController@index');
     $router->get('/getDataTypes', 'CategoryController@getDataTypes');
     $router->get('/getStatus', 'StatusController@index');

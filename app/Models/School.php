@@ -57,5 +57,8 @@ class School extends Model implements AuthenticatableContract, AuthorizableContr
       $query->when($filters['school_type'] ?? false, function($query, $school_type) {
          return $query->where('school_type_id', $school_type);
       });
+      $query->when($filters['name'] ?? false, function($query, $name) {
+         return $query->where('name', 'like', '%'.$name.'%');
+      });
    }
 }
