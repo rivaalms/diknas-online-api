@@ -36,4 +36,13 @@ class Supervisor extends Model implements AuthenticatableContract, AuthorizableC
    public function schools() {
       return $this->hasMany(SchoolStudent::class);
    }
+
+   public function scopeFilter($query, Array $filters) {
+      $query->when($filters['search'] ?? false, function($query, $search) {
+         return $query->where('name','like', '%'.$search.'%')->orWhere('nip', 'like', '%'.$search.'%');
+      });
+      $query->when($filters['name'] ?? false, function($query, $search) {
+         return $query->where('name','like', '%'.$search.'%');
+      });
+   }
 }

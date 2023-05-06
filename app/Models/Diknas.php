@@ -32,4 +32,13 @@ class Diknas extends Model implements AuthenticatableContract, AuthorizableContr
       'password',
       'api_token',
    ];
+
+   public function scopeFilter($query, Array $filters) {
+      $query->when($filters['search'] ?? false, function($query, $search) {
+         return $query->where('name','like', '%'.$search.'%')->orWhere('nip', 'like', '%'.$search.'%');
+      });
+      $query->when($filters['name'] ?? false, function($query, $search) {
+         return $query->where('name','like', '%'.$search.'%');
+      });
+   }
 }

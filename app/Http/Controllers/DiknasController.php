@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Diknas;
 use App\Models\School;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,17 @@ class DiknasController extends Controller
     * @return void
     */
 
+   public function index() {
+      $data = Diknas::filter(request(['search']))->orderBy('updated_at', 'desc')->paginate(10);
+      if ($data) {
+         foreach($data as $d) {
+            $d->date = Carbon::parse($d->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
+         }
+      }
+      $count = Diknas::count();
+      return response()->json(['status' => 'success', 'data' => $data, 'count' => $count]);
+   }
+   
    public function login(Request $request) {
       $cred = $this->validate($request, [
          'nip' => 'required|exists:diknas,nip',
@@ -78,5 +90,42 @@ class DiknasController extends Controller
       $hashed = Hash::make($password);
       $supervisor->update(['password' => $hashed]);
       return response()->json(['status' => 'success']);
+   }
+
+   public function store(Request $request) {
+      $cred = $this->validate($request, [
+         'name' => 'required',
+         'email' => 'required|email|unique:diknas',
+         'nip' => 'required|unique:diknas',
+         'password' => 'required',
+      ]);
+
+      $cred['password'] = Hash::make($cred['password']);
+
+      $data = Diknas::create($cred);
+      return response()->json(['status' => 'success', 'data' => $data]);
+   }
+
+   public function update(Request $request, $id) {
+      $diknas = Diknas::find($id);
+      $cred = $this->validate($request, [
+         'name' => 'required',
+         'email' => 'required|email|unique:supervisors,email,' . $id,
+         'nip' => 'required|unique:supervisors,nip,' . $id,
+      ]);
+      
+      if ($request->password) {
+         if (Hash::check($request->old_password, $diknas->password)) {
+            $cred['password'] = Hash::make($request->password);
+         }
+      }
+
+      $diknas->update($cred);
+      return response()->json(['status' => 'success', 'data' => $diknas]);
+   }
+
+   public function delete($id) {
+      $data = Diknas::destroy($id);
+      return response()->json(['status' => 'success', 'data' => $data]);
    }
 }

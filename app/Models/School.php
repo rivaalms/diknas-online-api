@@ -52,4 +52,10 @@ class School extends Model implements AuthenticatableContract, AuthorizableContr
    public function data() {
       return $this->hasMany(Data::class);
    }
+
+   public function scopeFilter($query, Array $filters) {
+      $query->when($filters['school_type'] ?? false, function($query, $school_type) {
+         return $query->where('school_type_id', $school_type);
+      });
+   }
 }

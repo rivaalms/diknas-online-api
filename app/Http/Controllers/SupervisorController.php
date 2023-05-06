@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Controllers\SchoolStudentController;
+use Carbon\Carbon;
 
 class SupervisorController extends Controller
 {
@@ -18,6 +19,20 @@ class SupervisorController extends Controller
     * @return void
     */
 
+   public function index() {
+      $data = Supervisor::filter(request(['search']))->orderBy('updated_at', 'desc')->paginate(10);
+      foreach ($data as $d) {
+         $d->date = Carbon::parse($d->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
+      }
+      $count = Supervisor::count();
+      return response()->json(['status' => 'success', 'data' => $data, 'count' => $count]);
+   }
+
+   public function getAll() {
+      $data = Supervisor::filter(request(['search', 'name']))->orderBy('name', 'asc')->get();
+      return response()->json(['status' => 'success', 'data' => $data]);
+   }
+   
    public function login(Request $request) {
       $cred = $this->validate($request, [
          'nip' => 'required|exists:supervisors,nip',
@@ -84,5 +99,42 @@ class SupervisorController extends Controller
       $hashed = Hash::make($password);
       $supervisor->update(['password' => $hashed]);
       return response()->json(['status' => 'success']);
+   }
+
+   public function store(Request $request) {
+      $cred = $this->validate($request, [
+         'name' => 'required',
+         'email' => 'required|email|unique:supervisors',
+         'nip' => 'required|unique:supervisors',
+         'password' => 'required',
+      ]);
+
+      $cred['password'] = Hash::make($cred['password']);
+
+      $data = Supervisor::create($cred);
+      return response()->json(['status' => 'success', 'data' => $data]);
+   }
+
+   public function update(Request $request, $id) {
+      $supervisor = Supervisor::find($id);
+      $cred = $this->validate($request, [
+         'name' => 'required',
+         'email' => 'required|email|unique:supervisors,email,' . $id,
+         'nip' => 'required|unique:supervisors,nip,' . $id,
+      ]);
+
+      if ($request->password) {
+         if (Hash::check($request->old_password, $supervisor->password)) {
+            $cred['password'] = Hash::make($request->password);
+         }
+      }
+
+      $supervisor->update($cred);
+      return response()->json(['status' => 'success', 'data' => $supervisor]);
+   }
+
+   public function delete($id) {
+      $supervisor = Supervisor::destroy($id);
+      return response()->json(['status' => 'success', 'data' => $supervisor]);
    }
 }
