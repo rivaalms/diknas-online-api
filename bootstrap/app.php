@@ -82,6 +82,7 @@ $app->middleware([
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'supervisor' => App\Http\Middleware\Authenticate::class,
+    // 'invalidate_token' => App\Http\Middleware\InvalidateTokenMiddleware::class, // NOTE: Unused due to inefficiency
 ]);
 
 /*

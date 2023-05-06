@@ -24,7 +24,7 @@ $router->post('/supervisor/login', 'SupervisorController@login');
 $router->post('/diknas/login', 'DiknasController@login');
 $router->post('/admin/login', 'UserController@login');
 
-$router->group(['middleware' => 'auth'], function() use($router) {
+$router->group(['middleware' => ['auth']], function() use($router) {
     $router->get('/school', 'SchoolController@index');
     $router->post('/school', 'SchoolController@store');
     $router->get('/school/getSelf', 'SchoolController@getSchoolLogin');
