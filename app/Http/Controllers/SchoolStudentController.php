@@ -11,14 +11,16 @@ class SchoolStudentController extends Controller
    public function getStudents($id) {
       $data = SchoolStudent::where('school_id', $id)->filter(request(['year']))->orderBy('updated_at', 'desc')->get();
       $data2 = [];
+      $data = $data->toArray();
       $i = 0;
       while ($i < count($data)) {
-         $j = $i + 1;
-         while ($j < count($data)) {
-            if ($data[$i]->grade == $data[$j]->grade) {
+         $j = count($data) - 1;
+         while ($j > $i) {
+            if ($data[$i]['grade'] === $data[$j]['grade']) {
                unset($data[$j]);
+               $data = array_values($data);
             }
-            $j++;
+            $j--;
          }
          $i++;
       }
@@ -27,7 +29,7 @@ class SchoolStudentController extends Controller
          array_push($data2, $d);
       }
 
-      usort($data2, fn($a, $b) => $a->grade - $b->grade);
+      usort($data2, fn($a, $b) => $a['grade'] - $b['grade']);
       return response()->json(['status' => 'success', 'data' => $data2]);
    }
 
