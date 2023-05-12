@@ -50,6 +50,7 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->get('/supervisor/getData/{id}', 'DataController@getDataBySupervisor');
     $router->get('/supervisor/getSchoolBySupervisor/{id}', 'SupervisorController@getSchoolBySupervisor');
     $router->get('/supervisor/getPaginatedSchoolBySupervisor/{id}', 'SupervisorController@getPaginatedSchoolBySupervisor');
+    $router->get('/supervisor/getStudentsYear/{id}', 'SchoolStudentController@getStudentsYearSupervisor');
     $router->post('/supervisor/verifyData', 'DataController@verifyData');
     $router->post('/supervisor/revisionData', 'DataController@revisionData');
     $router->put('/supervisor/updatepassword/{id}', 'SupervisorController@updatePassword');
