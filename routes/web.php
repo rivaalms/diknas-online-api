@@ -57,6 +57,7 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->put('/supervisor/update/{id}', 'SupervisorController@update');
     $router->delete('/supervisor/delete/{id}', 'SupervisorController@delete');
 
+    $router->post('/diknas/logout', 'DiknasController@logout');
     $router->get('/diknas', 'DiknasController@index');
     $router->get('/diknas/getSelf', 'DiknasController@getSelf');
     $router->get('/diknas/getAllSchool', 'DiknasController@getAllSchool');
@@ -67,6 +68,7 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->put('/diknas/update/{id}', 'DiknasController@update');
     $router->delete('/diknas/delete/{id}', 'DiknasController@delete');
     
+    $router->post('/admin/logout', 'UserController@logout');
     $router->get('/admin', 'UserController@index');
     $router->get('/admin/getSelf', 'UserController@getSelf');
     $router->get('/admin/countUsers', 'UserController@countUsers');
