@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Data;
+use App\Models\School;
 use App\Models\DataType;
+use App\Models\Revision;
 use App\Models\DataStatus;
 use App\Models\DataCategory;
-use App\Models\Revision;
-use App\Models\School;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -52,9 +53,9 @@ class DataController extends Controller
 
    public function getVerifiedData() {
       $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->where('data_status_id', 2)->filter(request(['school', 'status', 'category', 'data_type', 'year']))->orderBy('updated_at', 'desc')->paginate(10);
-      // foreach($data as $d) {
-      //    $d->data_category = $d->data_type->data_category;
-      // }
+      foreach($data as $d) {
+         $d->date = Carbon::parse($d->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
+      }
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
@@ -121,6 +122,27 @@ class DataController extends Controller
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
+   public function updateAdmin(Request $request, $id) {
+      if ($request->file()) {
+         $file = $request->file('file');
+         $fileName = $file->getClientOriginalName();
+         $file->move('files', $fileName);
+
+         if ($request->old_path && File::exists('files/'.$request->old_path)) {
+            File::delete('files/'.$request->old_path);
+         }
+
+         $data = Data::where('id', $id)->update([
+            'data_status_id' => $request->data_status_id,
+            'data_type_id' => $request->data_type_id,
+            'path' => $request->path,
+            'year' => $request->year,
+            'data_status_id' => 4,
+         ]);
+         return response()->json(['status' => 'success', 'data' => $data]);
+      }
+   }
+
    public function delete(Request $request, $id) {
       $data = Data::destroy($id);
       if ($request->path && File::exists('files/'.$request->path)) {
@@ -140,7 +162,22 @@ class DataController extends Controller
    }
 
    public function searchSchoolFilter() {
-      $data = School::all();
+      $data = School::get(['id', 'name']);
+      return response()->json(['status' => 'success', 'data' => $data]);
+   }
+
+   public function getDataYear() {
+      $query = DB::table('data')->select('year');
+
+      if (request()->header('user-type') == 1) {
+         $data = $query->where('school_id', request()->user_id)->distinct()->orderBy('year', 'desc')->get();
+      } else if (request()->header('user-type') == 2) {
+         $schools = School::where('supervisor_id', request()->user_id)->pluck('id');
+         $data = $query->whereIn('school_id', $schools)->distinct()->orderBy('year', 'desc')->get();
+      } else if (request()->header('user-type') == 3) {
+         $data = $query->where('data_status_id', 2)->distinct()->orderBy('year', 'desc')->get();
+      }
+
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 }
