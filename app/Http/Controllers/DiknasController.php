@@ -54,7 +54,7 @@ class DiknasController extends Controller
    }
 
    public function getSchoolStats() {
-      $school = School::with(['supervisor'])->paginate(5);
+      $school = School::with(['supervisor'])->paginate(10);
       $schoolStudents = new SchoolStudentController;
       $schoolTeachers = new SchoolTeacherController;
 
