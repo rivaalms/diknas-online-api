@@ -80,6 +80,7 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->put('/admin/update/{id}', 'UserController@update');
     $router->delete('/admin/delete/{id}', 'UserController@delete');
     $router->put('/admin/updatepassword/{id}', 'UserController@updatepassword');
+    $router->put('/admin/data/{id}/update', 'DataController@updateAdmin');
     
     $router->get('/searchSchoolFilter', 'DataController@searchSchoolFilter');
     $router->get('/getCategories', 'CategoryController@index');
@@ -92,4 +93,5 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->post('/data/create', 'DataController@create');
     $router->delete('/data/{id}/delete', 'DataController@delete');
     $router->get('/getSchoolType', 'SchoolController@getSchoolType');
+    $router->get('/getDataYear', 'DataController@getDataYear');
 });
