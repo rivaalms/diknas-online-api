@@ -30,7 +30,7 @@ class SchoolStudent extends Model
 
    public function scopeFilter($query, Array $filters) {
       $query->when($filters['year'] ?? false, function($query, $year) {
-         return $query->where('year', $year);
+         return $query->where('year', 'like', '%'.$year.'%');
       });
       $query->when($filters['school_id'] ?? false, function($query, $school) {
          return $query->where('school_id', $school);

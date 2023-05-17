@@ -60,12 +60,12 @@ class SupervisorController extends Controller
    }
 
    public function getSchoolBySupervisor($id) {
-      $data = School::where('supervisor_id', $id)->get();
+      $data = School::where('supervisor_id', $id)->filter(request(['school']))->get();
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
    public function getPaginatedSchoolBySupervisor($id) {
-      $school = School::where('supervisor_id', $id)->paginate(5);
+      $school = School::where('supervisor_id', $id)->filter(request(['school', 'year']))->paginate(5);
       $schoolStudents = new SchoolStudentController;
       $schoolTeachers = new SchoolTeacherController;
       foreach ($school as $s) {
