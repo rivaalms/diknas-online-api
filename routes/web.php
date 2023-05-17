@@ -91,7 +91,7 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->get('/getData', 'DataController@index');
     $router->get('/getDataById/{id}', 'DataController@getDataById');
     $router->post('/data/create', 'DataController@create');
-    $router->delete('/data/{id}/delete', 'DataController@delete');
+    $router->delete('/data/delete/{id}', 'DataController@delete');
     $router->get('/getSchoolType', 'SchoolController@getSchoolType');
     $router->get('/getDataYear', 'DataController@getDataYear');
 });
