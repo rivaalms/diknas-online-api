@@ -42,6 +42,7 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->get('/school/getTeachersYear/{id}', 'SchoolTeacherController@getTeachersYear');
     $router->post('/school/teachers', 'SchoolTeacherController@storeTeachers');
     $router->get('/school/getRevisionData/{id}', 'RevisionController@getRevisionData');
+    $router->get('/countSchool', 'SchoolController@countSchool');
 
     $router->get('/supervisor', 'SupervisorController@index');
     $router->get('/supervisor/getAll', 'SupervisorController@getAll');

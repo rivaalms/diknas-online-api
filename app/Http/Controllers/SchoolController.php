@@ -134,4 +134,12 @@ class SchoolController extends Controller
       $data = SchoolType::all();
       return response()->json(['status' => 'success', 'data' => $data]);
    }
+
+   public function countSchool() {
+      $school = School::count();
+      $smp = School::where('school_type_id', 1)->count();
+      $sd = School::where('school_type_id', 2)->count();
+
+      return response()->json(['status' => 'success', 'data' => ['total' => $school, 'smp' => $smp, 'sd' => $sd]]);
+   }
 }
