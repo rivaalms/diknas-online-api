@@ -62,6 +62,7 @@ $router->group(['middleware' => ['auth']], function() use($router) {
     $router->post('/diknas/logout', 'DiknasController@logout');
     $router->get('/diknas', 'DiknasController@index');
     $router->get('/diknas/getSelf', 'DiknasController@getSelf');
+    $router->get('/diknas/getSchoolSupervisorCount', 'DiknasController@getSchoolSupervisorCount');
     $router->get('/diknas/getAllSchool', 'DiknasController@getAllSchool');
     $router->get('/diknas/getData', 'DataController@getVerifiedData');
     $router->get('/diknas/getSchoolStats', 'DiknasController@getSchoolStats');

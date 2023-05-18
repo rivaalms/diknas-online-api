@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Diknas;
 use App\Models\School;
+use App\Models\Supervisor;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -42,10 +43,23 @@ class DiknasController extends Controller
       }
       return response()->json(['status' => 'error']);
    }
+   
+   public function logout(Request $request) {
+      $diknas = $request->user();
+      $diknas->update(['api_token' => null]);
+      return response()->json(['status' => 'success']);
+   }
 
    public function getSelf(Request $request) {
       $data = Diknas::where('id', $request->user()->id)->first();
       return response()->json(['status' => 'success', 'data' => $data]);
+   }
+
+   public function getSchoolSupervisorCount() {
+      $school = School::count();
+      $supervisor = Supervisor::count();
+      return response()->json(['status' => 'success', 'data' => [
+         'school' => ['title' => 'Jumlah Sekolah', 'value' => $school], 'supervisor' => ['title' => 'Jumlah Pengawas', 'value' => $supervisor]]]);
    }
 
    public function getAllSchool() {
