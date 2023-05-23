@@ -32,6 +32,11 @@ class SchoolController extends Controller
       return response()->json(['status' => 'success', 'data' => $schools]);
    }
 
+   public function getAllSchool() {
+      $data = School::all();
+      return response()->json(['status' => 'success', 'data' => $data]);
+   }
+
    public function login(Request $request) {
       $cred = $this->validate($request, [
          'email' => 'required|email|exists:schools,email',
@@ -65,7 +70,7 @@ class SchoolController extends Controller
    }
 
    public function getSingle($id) {
-      $school = School::find($id);
+      $school = School::with(['supervisor'])->find($id);
       return response()->json(['status' => 'success', 'data' => $school]);
    }
 
@@ -119,6 +124,9 @@ class SchoolController extends Controller
    }
 
    public function getSchoolLogin(Request $request) {
+      if ($request->header('User-Type') != 1) {
+         return response('Unauthorized', 401);
+      }
       $data = School::with('supervisor')->where('id', $request->user()->id)->first();
       return response()->json(['status' => 'success', 'data' => $data]);
       // return response()->json(['status' => 'success', 'data' => $request->user()]);
@@ -141,5 +149,23 @@ class SchoolController extends Controller
       $sd = School::where('school_type_id', 2)->count();
 
       return response()->json(['status' => 'success', 'data' => ['total' => $school, 'smp' => $smp, 'sd' => $sd]]);
+   }
+
+   public function getStudentTeacherCount(Request $request) {
+      $studentController = new SchoolStudentController;
+      $teacherController = new SchoolTeacherController;
+
+      $students = $studentController->getStudentsNotJSON($request->school_id);
+      $teachers = $teacherController->getTeachersNotJSON($request->school_id);
+
+      $students_count = $students->total_students;
+      $teachers_count = $teachers->total_teachers;
+
+      $data = [
+         'students' => $students_count,
+         'teachers' => $teachers_count
+      ];
+
+      return response()->json(['status' => 'success', 'data' => $data]);
    }
 }
