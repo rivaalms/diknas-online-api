@@ -8,15 +8,20 @@ use Illuminate\Support\Facades\DB;
 
 class SchoolTeacherController extends Controller
 {
-   public function getTeachers($id) {
-      $data = SchoolTeacher::where('school_id', $id)->filter(request(['year']))->orderBy('updated_at', 'desc')->first();
+   public function getTeachers(Request $request) {
+      $data = SchoolTeacher::where('school_id', $request->school)->filter(request(['year']))->orderBy('updated_at', 'desc')->first();
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
-   public function getTeachersYear($id) {
-      $query = DB::table('school_teachers')->select('year')->where('school_id', $id);
+   public function getTeachersYear(Request $request) {
+      $query = DB::table('school_teachers')->select('year')->where('school_id', $request->school);
       $data = $query->distinct()->orderBy('year', 'desc')->get();
       return response()->json(['status' => 'success', 'data' => $data]);
+   }
+
+   public function getAllTeachersYear() {
+      $data = DB::table('school_teachers')->select('year')->distinct()->orderBy('year', 'desc')->get();
+      return $data;
    }
 
    public function storeTeachers(Request $request) {
