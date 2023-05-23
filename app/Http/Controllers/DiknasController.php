@@ -62,8 +62,24 @@ class DiknasController extends Controller
          'school' => ['title' => 'Jumlah Sekolah', 'value' => $school], 'supervisor' => ['title' => 'Jumlah Pengawas', 'value' => $supervisor]]]);
    }
 
-   public function getAllSchool() {
-      $data = School::all();
+   public function getStudentTeacherYearList() {
+      $studentController = new SchoolStudentController;
+      $teacherController = new SchoolTeacherController;
+
+      $studentYearList = $studentController->getAllStudentsYear();
+      $teacherYearList = $teacherController->getAllTeachersYear();
+
+      $studentYear = [];
+      $teacherYear = [];
+      foreach($studentYearList as $s) {
+         array_push($studentYear, $s->year);
+      }
+      foreach($teacherYearList as $t) {
+         array_push($teacherYear, $t->year);
+      }
+
+      $merged = array_merge($studentYear, $teacherYear);
+      $data = array_unique($merged);
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
