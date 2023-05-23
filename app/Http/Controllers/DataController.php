@@ -26,7 +26,7 @@ class DataController extends Controller
    }
    
    public function getDataById($id) {
-      $data = Data::find($id);
+      $data = Data::with(['data_type', 'data_type.data_category', 'data_status', 'school'])->find($id);
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
@@ -41,11 +41,10 @@ class DataController extends Controller
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
-   public function getDataBySupervisor($id) {
-      $schools = School::where('supervisor_id', $id)->pluck('id');
+   public function getDataBySupervisor(Request $request) {
+      $schools = School::where('supervisor_id', $request->supervisor)->pluck('id');
       $data = Data::with(['school', 'data_type', 'data_type.data_category', 'data_status'])->whereIn('school_id', $schools)->filter(request(['school', 'status', 'category', 'data_type', 'year']))->orderBy('updated_at', 'desc')->paginate(10);
       foreach($data as $d) {
-         $d->data_category = $d->data_type->data_category;
          $d->date = Carbon::parse($d->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
       }
       return response()->json(['status' => 'success', 'data' => $data]);
@@ -87,22 +86,6 @@ class DataController extends Controller
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
-   public function edit($id) {
-      $item = Data::find($id);
-      $type = $item->data_type;
-      $data_type = DataType::where('data_category_id', $type->data_category_id)->get();
-      $category = DataCategory::all();
-      $status = DataStatus::all();
-
-      $data = [
-         'data' => $item,
-         'data_type' => $data_type,
-         'category' => $category,
-         'status' => $status
-      ];
-      return response()->json(['status' => 'success', 'data' => $data]);
-   }
-
    public function updateSchool(Request $request, $id) {
       $file = $request->file('file');
       $fileName = $file->getClientOriginalName();
@@ -113,7 +96,6 @@ class DataController extends Controller
       }
       
       $data = Data::where('id', $id)->update([
-         'data_status_id' => $request->data_status_id,
          'data_type_id' => $request->data_type_id,
          'path' => $request->path,
          'year' => $request->year,
@@ -122,7 +104,7 @@ class DataController extends Controller
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
-   public function updateAdmin(Request $request, $id) {
+   public function update(Request $request, $id) {
       if ($request->file()) {
          $file = $request->file('file');
          $fileName = $file->getClientOriginalName();
@@ -137,9 +119,10 @@ class DataController extends Controller
             'data_type_id' => $request->data_type_id,
             'path' => $request->path,
             'year' => $request->year,
-            'data_status_id' => 4,
          ]);
          return response()->json(['status' => 'success', 'data' => $data]);
+      } else {
+         return response()->json(['status' => 'failed', 'message' => 'File wajib dilampirkan'], 422);
       }
    }
 
@@ -152,13 +135,16 @@ class DataController extends Controller
    }
 
    public function downloadFile(Request $request) {
+      if (!$request->path) {
+         return response()->json(['error' => 'Invalid parameters', 'status' => 422], 422);
+      }
       $file_path = 'files/'.$request->path;
 
       if (File::exists($file_path)) {
          $file = File::get($file_path);
          $response = new Response($file, 200);
          return $response;
-      } else return response()->json(['error' => 'File not found'], 404);
+      } else return response()->json(['error' => 'File not found', 'status' => 404], 404);
    }
 
    public function searchSchoolFilter() {
@@ -176,6 +162,8 @@ class DataController extends Controller
          $data = $query->whereIn('school_id', $schools)->distinct()->orderBy('year', 'desc')->get();
       } else if (request()->header('user-type') == 3) {
          $data = $query->where('data_status_id', 2)->distinct()->orderBy('year', 'desc')->get();
+      } else if (request()->header('user-type') == 4) {
+         $data = $query->distinct()->orderBy('year', 'desc')->get();
       }
 
       return response()->json(['status' => 'success', 'data' => $data]);
