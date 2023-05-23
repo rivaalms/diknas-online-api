@@ -30,7 +30,7 @@ class School extends Model implements AuthenticatableContract, AuthorizableContr
    */
    protected $hidden = [
       'password',
-      'api_token'
+      // 'api_token'
    ];
 
    public function supervisor() {
