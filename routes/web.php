@@ -26,73 +26,74 @@ $router->post('/admin/login', 'UserController@login');
 
 $router->group(['middleware' => ['auth']], function() use($router) {
     $router->get('/school', 'SchoolController@index');
-    $router->post('/school', 'SchoolController@store');
+    $router->post('/school/create', 'SchoolController@store');
     $router->get('/school/getSelf', 'SchoolController@getSchoolLogin');
     $router->get('/school/get/{id}', 'SchoolController@getSingle');
     $router->put('/school/update/{id}', 'SchoolController@update');
     $router->delete('/school/delete/{id}', 'SchoolController@destroy');
     $router->post('/school/logout', 'SchoolController@logout');
-    $router->get('/school/getData/{id}', 'DataController@getDataBySchool');
-    $router->put('/school/data/{id}/update', 'DataController@updateSchool');
     $router->put('/school/updatepassword/{id}', 'SchoolController@updatePassword');
-    $router->get('/school/getStudents/{id}', 'SchoolStudentController@getStudents');
-    $router->get('/school/getStudentsYear/{id}', 'SchoolStudentController@getStudentsYear');
-    $router->post('/school/students', 'SchoolStudentController@storeStudents');
-    $router->get('/school/getTeachers/{id}', 'SchoolTeacherController@getTeachers');
-    $router->get('/school/getTeachersYear/{id}', 'SchoolTeacherController@getTeachersYear');
-    $router->post('/school/teachers', 'SchoolTeacherController@storeTeachers');
-    $router->get('/school/getRevisionData/{id}', 'RevisionController@getRevisionData');
+
+    $router->put('/school/data/{id}/update', 'DataController@updateSchool');
+    
     $router->get('/countSchool', 'SchoolController@countSchool');
+    $router->get('/getStudentTeacherCount', 'SchoolController@getStudentTeacherCount');
+    $router->get('/getStudents', 'SchoolStudentController@getStudents');
+    $router->get('/getStudentsYear', 'SchoolStudentController@getStudentsYear');
+    $router->post('/storeStudents', 'SchoolStudentController@storeStudents');
+    $router->get('/getTeachers', 'SchoolTeacherController@getTeachers');
+    $router->get('/getTeachersYear', 'SchoolTeacherController@getTeachersYear');
+    $router->post('/storeTeachers', 'SchoolTeacherController@storeTeachers');
+    $router->get('/getRevision', 'RevisionController@getRevision');
+    $router->get('/getAllSchool', 'SchoolController@getAllSchool');
 
     $router->get('/supervisor', 'SupervisorController@index');
     $router->get('/supervisor/getAll', 'SupervisorController@getAll');
     $router->post('/supervisor/logout', 'SupervisorController@logout');
     $router->get('/supervisor/getSelf', 'SupervisorController@getSelf');
-    $router->get('/supervisor/getData/{id}', 'DataController@getDataBySupervisor');
     $router->get('/supervisor/getSchoolBySupervisor/{id}', 'SupervisorController@getSchoolBySupervisor');
-    $router->get('/supervisor/getPaginatedSchoolBySupervisor/{id}', 'SupervisorController@getPaginatedSchoolBySupervisor');
     $router->get('/supervisor/getStudentsYear/{id}', 'SchoolStudentController@getStudentsYearSupervisor');
+    
+    $router->get('/supervisor/getData', 'DataController@getDataBySupervisor');
     $router->post('/supervisor/verifyData', 'DataController@verifyData');
     $router->post('/supervisor/revisionData', 'DataController@revisionData');
+
     $router->put('/supervisor/updatepassword/{id}', 'SupervisorController@updatePassword');
     $router->post('/supervisor/create', 'SupervisorController@store');
     $router->put('/supervisor/update/{id}', 'SupervisorController@update');
     $router->delete('/supervisor/delete/{id}', 'SupervisorController@delete');
+    $router->get('/getSchoolSupervisorCount', 'DiknasController@getSchoolSupervisorCount');
 
     $router->post('/diknas/logout', 'DiknasController@logout');
     $router->get('/diknas', 'DiknasController@index');
     $router->get('/diknas/getSelf', 'DiknasController@getSelf');
-    $router->get('/diknas/getSchoolSupervisorCount', 'DiknasController@getSchoolSupervisorCount');
-    $router->get('/diknas/getAllSchool', 'DiknasController@getAllSchool');
-    $router->get('/diknas/getData', 'DataController@getVerifiedData');
-    $router->get('/diknas/getSchoolStats', 'DiknasController@getSchoolStats');
+    // $router->get('/diknas/getData', 'DataController@getVerifiedData');
+    $router->get('/getSchoolStats', 'DiknasController@getSchoolStats');
     $router->put('/diknas/updatepassword/{id}', 'DiknasController@updatePassword');
     $router->post('/diknas/create', 'DiknasController@store');
     $router->put('/diknas/update/{id}', 'DiknasController@update');
     $router->delete('/diknas/delete/{id}', 'DiknasController@delete');
+
+    $router->get('/getStudentTeacherYearList', 'DiknasController@getStudentTeacherYearList');
     
     $router->post('/admin/logout', 'UserController@logout');
     $router->get('/admin', 'UserController@index');
     $router->get('/admin/getSelf', 'UserController@getSelf');
     $router->get('/admin/countUsers', 'UserController@countUsers');
-    $router->get('/admin/countSchoolByType', 'UserController@countSchoolByType');
-    $router->post('/admin/createSchool', 'SchoolController@store');
-    $router->get('/admin/countSupervisors', 'UserController@countSupervisors');
     $router->post('/admin/create', 'UserController@store');
     $router->put('/admin/update/{id}', 'UserController@update');
     $router->delete('/admin/delete/{id}', 'UserController@delete');
     $router->put('/admin/updatepassword/{id}', 'UserController@updatepassword');
-    $router->put('/admin/data/{id}/update', 'DataController@updateAdmin');
     
     $router->get('/searchSchoolFilter', 'DataController@searchSchoolFilter');
     $router->get('/getCategories', 'CategoryController@index');
     $router->get('/getDataTypes', 'CategoryController@getDataTypes');
     $router->get('/getStatus', 'StatusController@index');
     $router->post('/downloadFile', 'DataController@downloadFile');
-    $router->get('/edit/{id}', 'DataController@edit');
     $router->get('/getData', 'DataController@index');
-    $router->get('/getDataById/{id}', 'DataController@getDataById');
+    $router->get('/getData/{id}', 'DataController@getDataById');
     $router->post('/data/create', 'DataController@create');
+    $router->put('/data/update/{id}', 'DataController@update');
     $router->delete('/data/delete/{id}', 'DataController@delete');
     $router->get('/getSchoolType', 'SchoolController@getSchoolType');
     $router->get('/getDataYear', 'DataController@getDataYear');
