@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class SchoolStudentController extends Controller
 {
-   public function getStudents($id) {
-      $data = SchoolStudent::where('school_id', $id)->filter(request(['year']))->orderBy('updated_at', 'desc')->get();
+   public function getStudents(Request $request) {
+      $data = SchoolStudent::where('school_id', $request->school)->filter(request(['year']))->orderBy('updated_at', 'desc')->get();
       $data2 = [];
       $data = $data->toArray();
       $i = 0;
@@ -26,20 +26,38 @@ class SchoolStudentController extends Controller
          $i++;
       }
 
+      $total = 0;
       foreach($data as $d) {
+         $array = $d;
+         $sum = 0;
+         foreach ($array as $i => $a) {
+            if ($i !== 'id' && $i !== 'school_id' && $i !== 'grade' && $i !== 'year' && $i !== 'created_at' && $i !== 'updated_at') {
+               $total += $a;
+               $sum += $a;
+            }
+         }
+         $d['total'] = $sum;
          array_push($data2, $d);
       }
 
       usort($data2, fn($a, $b) => $a['grade'] - $b['grade']);
-      return response()->json(['status' => 'success', 'data' => $data2]);
+      return response()->json(['status' => 'success', 'data' => [
+         'total_students' => $total,
+         'students' => $data2,
+      ]]);
    }
 
-   public function getStudentsYear($id) {
-      $query = DB::table('school_students')->select('year')->where('school_id', $id);
+   public function getStudentsYear(Request $request) {
+      $query = DB::table('school_students')->select('year')->where('school_id', $request->school);
       $data = $query->distinct()->orderBy('year', 'desc')->get();
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 
+   public function getAllStudentsYear() {
+      $data = DB::table('school_students')->select('year')->distinct()->orderBy('year', 'desc')->get();
+      return $data;
+   }
+   
    public function getStudentsYearSupervisor($id) {
       $school = School::where('supervisor_id', $id)->pluck('id');
       $data = DB::table('school_students')->select('year')->whereIn('school_id', $school)->distinct()->orderBy('year', 'desc')->get();
