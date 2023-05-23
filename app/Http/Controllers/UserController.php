@@ -78,22 +78,12 @@ class UserController extends Controller
       $school = School::count();
       $supervisor = Supervisor::count();
       $diknas = Diknas::count();
+      $total = $school + $supervisor + $diknas;
       $data = [
          'total_school' => $school,
          'total_supervisor' => $supervisor,
-         'total_diknas' => $diknas
-      ];
-      return response()->json(['status' => 'success', 'data' => $data]);
-   }
-
-   public function countSchoolByType() {
-      $school = School::count();
-      $smp = School::where('school_type_id', 1)->count();
-      $sd = School::where('school_type_id', 2)->count();
-      $data = [
-         'smp' => $smp,
-         'sd' => $sd,
-         'total' => $school
+         'total_diknas' => $diknas,
+         'total' => $total
       ];
       return response()->json(['status' => 'success', 'data' => $data]);
    }
