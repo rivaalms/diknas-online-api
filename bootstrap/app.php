@@ -81,7 +81,10 @@ $app->middleware([
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
-    'supervisor' => App\Http\Middleware\Authenticate::class,
+    'school' => App\Http\Middleware\SchoolMiddleware::class,
+    'supervisor' => App\Http\Middleware\SupervisorMiddleware::class,
+    'diknas' => App\Http\Middleware\DiknasMiddleware::class,
+    'admin' => App\Http\Middleware\AdminMiddleware::class,
     // 'invalidate_token' => App\Http\Middleware\InvalidateTokenMiddleware::class, // NOTE: Unused due to inefficiency
 ]);
 

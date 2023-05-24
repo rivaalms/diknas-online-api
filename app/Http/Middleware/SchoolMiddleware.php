@@ -15,6 +15,9 @@ class SchoolMiddleware
      */
     public function handle($request, Closure $next)
     {
-        // if ()
+        if ($request->header('user-type') != 1) {
+            return response('Unauthorized', 401);
+        }
+        return $next($request);
     }
 }
