@@ -21,6 +21,7 @@ class SupervisorController extends Controller
 
    public function index() {
       $data = Supervisor::filter(request(['search']))->orderBy('updated_at', 'desc')->paginate(10);
+      $data->setHidden(['api_token', 'password']);
       foreach ($data as $d) {
          $d->date = Carbon::parse($d->updated_at)->locale('id_ID')->translatedFormat('d F Y H:i');
       }
@@ -30,6 +31,7 @@ class SupervisorController extends Controller
 
    public function getAll() {
       $data = Supervisor::filter(request(['search', 'name']))->orderBy('name', 'asc')->get();
+      $data->setHidden(['api_token', 'password']);
       return response()->json(['status' => 'success', 'data' => $data]);
    }
    
@@ -56,6 +58,7 @@ class SupervisorController extends Controller
 
    public function getSelf(Request $request) {
       $data = Supervisor::where('id', $request->user()->id)->first();
+      $data->setHidden(['password']);
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 

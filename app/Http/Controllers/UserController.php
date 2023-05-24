@@ -45,6 +45,7 @@ class UserController extends Controller
 
    public function getSelf(Request $request) {
       $data = User::where('id', $request->user()->id)->first();
+      $data->setHidden(['password']);
       return response()->json(['status' => 'success', 'data' => $data]);
    }
 

@@ -12,7 +12,6 @@ class SchoolController extends Controller
 {
    public function index() {
       $schools = School::with(['supervisor', 'school_type'])->filter(request(['school_type', 'name']))->orderBy('updated_at', 'desc')->paginate(10);
-
       $schoolStudents = new SchoolStudentController;
       $schoolTeachers = new SchoolTeacherController;
 
@@ -71,6 +70,7 @@ class SchoolController extends Controller
 
    public function getSingle($id) {
       $school = School::with(['supervisor'])->find($id);
+      $school->setHidden(['api_token', 'password']);
       return response()->json(['status' => 'success', 'data' => $school]);
    }
 
@@ -124,16 +124,14 @@ class SchoolController extends Controller
    }
 
    public function getSchoolLogin(Request $request) {
-      if ($request->header('User-Type') != 1) {
-         return response('Unauthorized', 401);
-      }
       $data = School::with('supervisor')->where('id', $request->user()->id)->first();
+      $data->setHidden(['password']);
       return response()->json(['status' => 'success', 'data' => $data]);
       // return response()->json(['status' => 'success', 'data' => $request->user()]);
    }
 
    public function logout(Request $request) {
-      $school = $request->user();
+      $school = School::find($request->user()->id);
       $school->update(['api_token' => null]);
       return response()->json(['status' => 'success']);
    }
